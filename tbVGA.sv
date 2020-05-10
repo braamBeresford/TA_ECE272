@@ -49,13 +49,13 @@ module tbVGA;
 
 	//Create master 50MHz clock, used only by DUT
 	initial begin
-		m_clk = 1'b1;
+		m_clk = 1'b0;
 		forever #(M_CYCLE/2)  m_clk = ~m_clk; 
 	end
 
 	//Create 25MHz clock, common between DUT and TB
 	initial begin
-		l_clk = 1'b0;
+		l_clk = 1'b1;
 		#(L_CYCLE);
 		@(posedge v_sync); 
 		forever #(L_CYCLE/2) l_clk = ~l_clk;
@@ -76,7 +76,7 @@ module tbVGA;
 
 		#(L_CYCLE*2);
 		
-		reset_tb = 1;
+		
 
 		reset_n = 0;		//TODO: Remove
 
@@ -88,7 +88,11 @@ module tbVGA;
 
 		//May want to seperate reset and syncing logic
 		//Reset testbench counters
-		@(posedge v_sync); reset_tb = 1;
+		@(posedge v_sync); 
+		reset_tb = 1;
+		#(L_CYCLE) 
+		reset_tb = 0;
+
 		$display("HELLO");
 		synced = 1;
 		// reset_n = 1;		//TODO: Remove
@@ -118,8 +122,8 @@ module tbVGA;
 		// 		else $error("@%d not all colours asserted simultaneously", $time);
 
 		//Done!
-		$display("DONE!");
-		
+		$display("Test bench passes");
+		$finish;
 	 
 	end
 
